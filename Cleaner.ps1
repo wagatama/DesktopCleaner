@@ -1,7 +1,7 @@
 ###########################################################################
 ###########################################################################
-$desktop = "C:\Users\daniel.russo\OneDrive - VITG\Desktop"
-$archiveMaster = "C:\Users\daniel.russo\OneDrive - VITG\Desktop\Archive"
+$desktop = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Desktop)
+$archiveMaster = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Desktop) + "\Archive"
 $month = Get-Date -UFormat %B
 $year = Get-Date -format yyyy
 $folderCheck = Get-ChildItem -path $archiveMaster -Directory
