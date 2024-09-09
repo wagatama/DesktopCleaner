@@ -4,47 +4,63 @@ $desktop = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder
 $archiveMaster = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Desktop) + "\Archive"
 $month = Get-Date -UFormat %B
 $year = Get-Date -format yyyy
-$folderCheck = Get-ChildItem -path $archiveMaster -Directory
 $workingFolder = "$month $year"
+$transferPath = "$archiveMaster\$workingfolder"
+$fullPath = $archiveMaster + "\" + $workingFolder
+###########################################################################
+$imageFolder = $archiveMaster + "\" + $workingFolder +"\Images"
+$documentsFolder = $archiveMaster + "\" + $workingFolder +"\Documents"
+$scriptsFolder = $archiveMaster + "\" + $workingFolder +"\Scripts" 
 ###########################################################################
 ###########################################################################
-$create = $false
-foreach($folder in $folderCheck){
-    if($folder.Name -like $workingFolder){
-        $create = $false
-    }else {
-        $create = $true
-    }
-}
 
-if($create){
+if(!(Test-Path $fullPath)){
+    Write-Host "Folder Doesn't Exist"
     New-Item -Path $archiveMaster -Name "$workingFolder" -ItemType "directory" -ErrorAction Stop | Out-Null
-    $transferPath = "$archiveMaster\$workingfolder"
     New-Item -Path $transferPath -Name "Images" -ItemType "directory" -ErrorAction Stop | Out-Null
     New-Item -Path $transferPath -Name "Documents" -ItemType "directory" -ErrorAction Stop | Out-Null
     New-Item -Path $transferPath -Name "Scripts" -ItemType "directory" -ErrorAction Stop | Out-Null
     Write-Host "$workingFolder has been created!"
-    
-}else {
-    Write-Host "Working in $workingFolder directory."
+}else{
+    Write-Host "Folder Exists"
+    $alreadyExists = $true
 }
-###########################################################################
-###########################################################################
+
+if ($alreadyExists){
+    if(!(Test-Path $imageFolder)){
+        Write-Host "Images Folder Doesn't Exist - Creating!"
+        New-Item -Path $transferPath -Name "Images" -ItemType "directory" -ErrorAction Stop | Out-Null
+    }
+    if(!(Test-Path $documentsFolder)){
+        Write-Host "Documents Folder Doesn't Exist - Creating!"
+        New-Item -Path $transferPath -Name "Documents" -ItemType "directory" -ErrorAction Stop | Out-Null
+    }
+    if(!(Test-Path $scriptsFolder)){
+        Write-Host "Scripts Folder Doesn't Exist - Creating!"
+        New-Item -Path $transferPath -Name "Scripts" -ItemType "directory" -ErrorAction Stop | Out-Null
+    }
+    
+}
+
 $desktopImages = Get-ChildItem -Path $desktop | ? {$_.Name -like "*.png" -or $_.Name -like "*.jpg" -or $_.Name -like "*.jpeg" -or $_.Name -like "*.psd"}
 $desktopDocuments = Get-ChildItem -Path $desktop | ? {$_.Name -like "*.txt" -or $_.Name -like "*.docx" -or $_.Name -like "*.pdf" -or $_.Name -like "*.csv"}
 $desktopScripts = Get-ChildItem -Path $desktop | ? {$_.Name -like "*.ps1" -or $_.Name -like "*.py"}
 
 foreach($image in $desktopImages){
-    Move-Item "$desktop\$image" -Destination "$transferPath\Images"
+    $imageVar = $image.Name
+    Move-Item "$desktop\$imageVar" -Destination "$imageFolder"
 }
 
 foreach($document in $desktopDocuments){
-    Move-Item "$desktop\$document" -Destination "$transferPath\Documents"
+    $documentVar = $document.Name
+    Move-Item "$desktop\$documentVar" -Destination "$documentsFolder"
 }
 
 foreach($script in $desktopScripts){
-    Move-Item "$desktop\$script" -Destination "$transferPath\Scripts"
+    $scriptVar = $scripts.Name
+    Move-Item "$desktop\$scriptVar" -Destination "$scriptsFolder"
 }
 ###########################################################################
 ###########################################################################
+
 Write-Host "`n`nScript has successfully completed!"
