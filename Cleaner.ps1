@@ -4,23 +4,22 @@ $desktop = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder
 $archiveMaster = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Desktop) + "\Archive"
 $month = Get-Date -UFormat %B
 $year = Get-Date -format yyyy
-$workingFolder = "$month $year"
-$transferPath = "$archiveMaster\$workingfolder"
-$fullPath = $archiveMaster + "\" + $workingFolder
+$monthYear = "$month $year"
+$fullPath = "$archiveMaster\$monthYear"
 ###########################################################################
-$imageFolder = $archiveMaster + "\" + $workingFolder +"\Images"
-$documentsFolder = $archiveMaster + "\" + $workingFolder +"\Documents"
-$scriptsFolder = $archiveMaster + "\" + $workingFolder +"\Scripts" 
+$imageFolder = $archiveMaster + "\" + $monthYear +"\Images"
+$documentsFolder = $archiveMaster + "\" + $monthYear +"\Documents"
+$scriptsFolder = $archiveMaster + "\" + $monthYear +"\Scripts" 
 ###########################################################################
 ###########################################################################
 
 if(!(Test-Path $fullPath)){
     Write-Host "Folder Doesn't Exist"
-    New-Item -Path $archiveMaster -Name "$workingFolder" -ItemType "directory" -ErrorAction Stop | Out-Null
-    New-Item -Path $transferPath -Name "Images" -ItemType "directory" -ErrorAction Stop | Out-Null
-    New-Item -Path $transferPath -Name "Documents" -ItemType "directory" -ErrorAction Stop | Out-Null
-    New-Item -Path $transferPath -Name "Scripts" -ItemType "directory" -ErrorAction Stop | Out-Null
-    Write-Host "$workingFolder has been created!"
+    New-Item -Path $archiveMaster -Name "$monthYear" -ItemType "directory" -ErrorAction Stop | Out-Null
+    New-Item -Path $fullPath -Name "Images" -ItemType "directory" -ErrorAction Stop | Out-Null
+    New-Item -Path $fullPath -Name "Documents" -ItemType "directory" -ErrorAction Stop | Out-Null
+    New-Item -Path $fullPath -Name "Scripts" -ItemType "directory" -ErrorAction Stop | Out-Null
+    Write-Host "$monthYear has been created!"
 }else{
     Write-Host "Folder Exists"
     $alreadyExists = $true
@@ -29,15 +28,15 @@ if(!(Test-Path $fullPath)){
 if ($alreadyExists){
     if(!(Test-Path $imageFolder)){
         Write-Host "Images Folder Doesn't Exist - Creating!"
-        New-Item -Path $transferPath -Name "Images" -ItemType "directory" -ErrorAction Stop | Out-Null
+        New-Item -Path $fullPath -Name "Images" -ItemType "directory" -ErrorAction Stop | Out-Null
     }
     if(!(Test-Path $documentsFolder)){
         Write-Host "Documents Folder Doesn't Exist - Creating!"
-        New-Item -Path $transferPath -Name "Documents" -ItemType "directory" -ErrorAction Stop | Out-Null
+        New-Item -Path $fullPath -Name "Documents" -ItemType "directory" -ErrorAction Stop | Out-Null
     }
     if(!(Test-Path $scriptsFolder)){
         Write-Host "Scripts Folder Doesn't Exist - Creating!"
-        New-Item -Path $transferPath -Name "Scripts" -ItemType "directory" -ErrorAction Stop | Out-Null
+        New-Item -Path $fullPath -Name "Scripts" -ItemType "directory" -ErrorAction Stop | Out-Null
     }
     
 }
@@ -57,7 +56,7 @@ foreach($document in $desktopDocuments){
 }
 
 foreach($script in $desktopScripts){
-    $scriptVar = $scripts.Name
+    $scriptVar = $script.Name
     Move-Item "$desktop\$scriptVar" -Destination "$scriptsFolder"
 }
 ###########################################################################
